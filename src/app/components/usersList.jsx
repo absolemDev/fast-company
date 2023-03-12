@@ -8,7 +8,7 @@ import Pagination from "./pagination";
 import GroupList from "./groupList";
 import _ from "lodash";
 
-const Users = () => {
+const UsersList = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [professions, setProfession] = useState();
     const [selectedProf, setSelectedProf] = useState();
@@ -110,4 +110,4 @@ const Users = () => {
     return "Loading...";
 };
 
-export default Users;
+export default UsersList;

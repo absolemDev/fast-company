@@ -12,7 +12,7 @@ const TableHeader = ({ columns, onSort, selectedSort }) => {
             onSort({ path: item, order: "asc" });
         }
     };
-    const renderIcon = (path) => {
+    const renderSortArrow = (path) => {
         if (path === selectedSort.path) {
             return (
                 <i
@@ -38,7 +38,7 @@ const TableHeader = ({ columns, onSort, selectedSort }) => {
                         scope="col"
                     >
                         {columns[column].name}
-                        {renderIcon(columns[column].path)}
+                        {renderSortArrow(columns[column].path)}
                     </th>
                 ))}
             </tr>
