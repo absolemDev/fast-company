@@ -1,12 +1,21 @@
 import React from "react";
-import { useParams } from "react-router-dom";
-import UserPage from "../components/userPage";
-import UsersList from "../components/usersList";
+import { useLocation, useParams } from "react-router-dom";
+import UserEditPage from "../components/page/userEditPage";
+import UserPage from "../components/page/userPage";
+import UsersListPage from "../components/page/usersListPage";
 
 const Users = () => {
     const { userId } = useParams();
-
-    return <>{userId ? <UserPage id={userId} /> : <UsersList />}</>;
+    const { pathname } = useLocation();
+    if (userId) {
+        return pathname === `/users/${userId}/edit` ? (
+            <UserEditPage id={userId} />
+        ) : (
+            <UserPage id={userId} />
+        );
+    } else {
+        return <UsersListPage />;
+    }
 };
 
 export default Users;

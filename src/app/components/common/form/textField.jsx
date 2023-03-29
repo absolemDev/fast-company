@@ -14,6 +14,9 @@ const TextField = ({
     const toggleShowPassword = () => {
         setShowPassword((prevState) => !prevState);
     };
+    const handelChange = ({ target }) => {
+        onChange({ name: target.name, value: target.value });
+    };
     return (
         <div className="mb-4">
             <label htmlFor={name}>{label}</label>
@@ -23,7 +26,7 @@ const TextField = ({
                     type={showPassword ? "text" : type}
                     id={name}
                     value={value}
-                    onChange={onChange}
+                    onChange={handelChange}
                     name={name}
                     className={`form-control${error ? " is-invalid" : ""}`}
                 />
@@ -46,8 +49,7 @@ const TextField = ({
 };
 
 TextField.defaultProps = {
-    type: "text",
-    placeholder: false
+    type: "text"
 };
 
 TextField.propTypes = {

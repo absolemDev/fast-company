@@ -1,15 +1,15 @@
 /* eslint-disable indent */
 import React, { useState, useEffect } from "react";
-import { paginate } from "../utils/paginate";
-import api from "../api";
-import UserTable from "./usersTable";
-import SearchStatus from "./searchStatus";
-import Pagination from "./pagination";
-import GroupList from "./groupList";
+import { paginate } from "../../../utils/paginate";
+import api from "../../../api";
+import UserTable from "../../ui/usersTable";
+import SearchStatus from "../../ui/searchStatus";
+import Pagination from "../../common/pagination";
+import GroupList from "../../common/groupList";
 import _ from "lodash";
-import TextField from "./textField";
+import TextField from "../../common/form/textField";
 
-const UsersList = () => {
+const UsersListPage = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [professions, setProfession] = useState();
     const [selectedProf, setSelectedProf] = useState();
@@ -23,10 +23,7 @@ const UsersList = () => {
     }, []);
     useEffect(() => {
         setCurrentPage(1);
-    }, [selectedProf]);
-    useEffect(() => {
-        if (search) setSelectedProf();
-    }, [search]);
+    }, [selectedProf, search]);
 
     const handleDelete = (userId) => {
         setUsers((prevState) =>
@@ -47,14 +44,15 @@ const UsersList = () => {
         setCurrentPage(pageIndex);
     };
     const handleProfessionSelect = (item) => {
+        if (search !== "") setSearch("");
         setSelectedProf(item);
-        setSearch("");
     };
     const handleSort = (item) => {
         setSortBy(item);
     };
-    const handleSearch = ({ target }) => {
-        setSearch(target.value.trim());
+    const handleSearch = (target) => {
+        setSelectedProf();
+        setSearch(target.value);
     };
 
     if (users) {
@@ -129,4 +127,4 @@ const UsersList = () => {
     return "Loading...";
 };
 
-export default UsersList;
+export default UsersListPage;
