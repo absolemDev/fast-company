@@ -68,14 +68,11 @@ const UserEditForm = ({
             return qualityData;
         });
     };
-    const getProfessionObject = (profession) => {
-        let profeessionData;
+    const getProfessionObject = (id) => {
         for (const p in professionsData) {
-            if (professionsData[p]._id === profession) {
-                profeessionData = professionsData[p];
-            }
+            const profeessionData = professionsData[p];
+            if (professionsData[p]._id === id) return profeessionData;
         }
-        return profeessionData;
     };
 
     const validate = () => {
@@ -90,12 +87,15 @@ const UserEditForm = ({
         e.preventDefault();
         const isValid = validate();
         if (!isValid) return;
-        api.users.update(_id, {
-            ...data,
-            qualities: getQualitiesArray(data.qualities),
-            profession: getProfessionObject(data.profession)
-        });
-        history.replace(`/users/${_id}`);
+        api.users
+            .update(_id, {
+                ...data,
+                qualities: getQualitiesArray(data.qualities),
+                profession: getProfessionObject(data.profession)
+            })
+            .then(() => {
+                history.replace(`/users/${_id}`);
+            });
     };
 
     return (
