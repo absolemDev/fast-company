@@ -9,7 +9,8 @@ const SelectField = ({
     onChange,
     defaultOption,
     options,
-    error
+    error,
+    ...rest
 }) => {
     const optionsArray =
         !Array.isArray(options) && typeof options === "object"
@@ -32,16 +33,20 @@ const SelectField = ({
                 name={name}
                 value={value}
                 onChange={handelChange}
+                {...rest}
             >
                 <option disabled value="">
                     {defaultOption}
                 </option>
-                {optionsArray &&
+                {optionsArray ? (
                     optionsArray.map((option) => (
                         <option key={option.value} value={option.value}>
                             {option.name}
                         </option>
-                    ))}
+                    ))
+                ) : (
+                    <option disabled>Loading...</option>
+                )}
             </select>
             {error && <div className="invalid-feedback">{error}</div>}
         </div>
@@ -57,4 +62,4 @@ SelectField.propTypes = {
     error: PropTypes.string
 };
 
-export default SelectField;
+export default React.memo(SelectField);

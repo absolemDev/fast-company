@@ -1,10 +1,8 @@
-import React, { useEffect, useState } from "react";
-import { validator } from "../../utils/validator";
+import React from "react";
 import api from "../../api";
 import PropTypes from "prop-types";
-import TextField from "../common/form/textField";
-import SelectField from "../common/form/selectField";
-import RadioField from "../common/form/radionField";
+import FormComponent, { TextField, SelectField } from "../common/form";
+import RadioField from "../common/form/radioField";
 import MultiSelectField from "../common/form/multiSelectField";
 import { useHistory } from "react-router-dom";
 
@@ -18,7 +16,7 @@ const UserEditForm = ({
     professionsData,
     qualitiesData
 }) => {
-    const [data, setData] = useState({
+    const data = {
         name,
         email,
         profession: profession._id,
@@ -27,16 +25,9 @@ const UserEditForm = ({
             label: quality.name,
             value: quality._id
         }))
-    });
-
-    const [errors, setErrors] = useState({});
-    const isValid = Object.keys(errors).length === 0;
+    };
 
     const history = useHistory();
-
-    useEffect(() => {
-        validate();
-    }, [data]);
 
     const validatorConfig = {
         name: {
@@ -75,18 +66,8 @@ const UserEditForm = ({
         }
     };
 
-    const validate = () => {
-        const errors = validator(data, validatorConfig);
-        setErrors(errors);
-        return Object.keys(errors).length === 0;
-    };
-    const handelChange = (target) => {
-        setData((prevState) => ({ ...prevState, [target.name]: target.value }));
-    };
-    const handelSubmit = (e) => {
-        e.preventDefault();
-        const isValid = validate();
-        if (!isValid) return;
+    const handelSubmit = (data) => {
+        console.log(data);
         api.users
             .update(_id, {
                 ...data,
@@ -99,28 +80,17 @@ const UserEditForm = ({
     };
 
     return (
-        <form onSubmit={handelSubmit}>
-            <TextField
-                label="Имя"
-                name="name"
-                value={data.name}
-                onChange={handelChange}
-                error={errors.name}
-            />
-            <TextField
-                label="Электронная почта"
-                name="email"
-                value={data.email}
-                onChange={handelChange}
-                error={errors.email}
-            />
+        <FormComponent
+            onSubmit={handelSubmit}
+            validatorConfig={validatorConfig}
+            defaultData={data}
+        >
+            <TextField label="Имя" name="name" autoFocus />
+            <TextField label="Электронная почта" name="email" />
             <SelectField
                 label="Выберите свою профессию"
                 defaultOption="Choose..."
                 options={professionsData}
-                onChange={handelChange}
-                value={data.profession}
-                error={errors.profession}
                 name="profession"
             />
             <RadioField
@@ -128,26 +98,18 @@ const UserEditForm = ({
                     { name: "Male", value: "male" },
                     { name: "Female", value: "female" }
                 ]}
-                value={data.sex}
                 name="sex"
-                onChange={handelChange}
                 label="Выберите ваш пол"
             />
             <MultiSelectField
                 options={qualitiesData}
-                onChange={handelChange}
-                defaultValue={data.qualities}
                 name="qualities"
                 label="Выберите ваши качества"
             />
-            <button
-                type="submit"
-                disabled={!isValid}
-                className="btn btn-primary w-100 mx-auto"
-            >
+            <button type="submit" className="btn btn-primary w-100 mx-auto">
                 Обновить
             </button>
-        </form>
+        </FormComponent>
     );
 };
 

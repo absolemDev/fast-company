@@ -3,7 +3,7 @@ import TextField from "../common/form/textField";
 import { validator } from "../../utils/validator";
 import api from "../../api";
 import SelectField from "../common/form/selectField";
-import RadioField from "../common/form/radionField";
+import RadioField from "../common/form/radioField";
 import MultiSelectField from "../common/form/multiSelectField";
 import CheckBoxField from "../common/form/checkBoxField";
 
@@ -67,10 +67,10 @@ const RegisterForm = () => {
         return Object.keys(errors).length === 0;
     };
 
-    const handelChange = (target) => {
+    const handleChange = (target) => {
         setData((prevState) => ({ ...prevState, [target.name]: target.value }));
     };
-    const handelSubmit = (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
         const isValid = validate();
         if (!isValid) return;
@@ -78,12 +78,12 @@ const RegisterForm = () => {
     };
 
     return (
-        <form onSubmit={handelSubmit}>
+        <form onSubmit={handleSubmit}>
             <TextField
                 label="Электронная почта"
                 name="email"
                 value={data.email}
-                onChange={handelChange}
+                onChange={handleChange}
                 error={errors.email}
             />
             <TextField
@@ -91,14 +91,14 @@ const RegisterForm = () => {
                 type="password"
                 name="password"
                 value={data.password}
-                onChange={handelChange}
+                onChange={handleChange}
                 error={errors.password}
             />
             <SelectField
                 label="Выберите вашу профессию"
                 defaultOption="Choose..."
                 options={professions}
-                onChange={handelChange}
+                onChange={handleChange}
                 value={data.profession}
                 error={errors.profession}
                 name="profession"
@@ -110,19 +110,19 @@ const RegisterForm = () => {
                 ]}
                 value={data.sex}
                 name="sex"
-                onChange={handelChange}
+                onChange={handleChange}
                 label="Выберите ваш пол"
             />
             <MultiSelectField
                 options={qualities}
-                onChange={handelChange}
+                onChange={handleChange}
                 defaultValue={data.qualities}
                 name="qualities"
                 label="Выберите ваши качества"
             />
             <CheckBoxField
                 value={data.licence}
-                onChange={handelChange}
+                onChange={handleChange}
                 name="licence"
                 error={errors.licence}
             >

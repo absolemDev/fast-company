@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import api from "../../../api";
 import PropTypes from "prop-types";
 import UserEditForm from "../../ui/userEditForm";
+import BackHistoryButton from "../../common/backButton";
 
 const UserEditPage = ({ id }) => {
     const [user, setUser] = useState();
@@ -15,6 +16,7 @@ const UserEditPage = ({ id }) => {
 
     return (
         <div className="container mt-5">
+            <BackHistoryButton />
             <div className="row">
                 <div className="col-md-6 offset-md-3 shadow p-4">
                     {user && professionsData && qualitiesData ? (
