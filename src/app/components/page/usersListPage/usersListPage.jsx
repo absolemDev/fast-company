@@ -1,44 +1,39 @@
 /* eslint-disable indent */
 import React, { useState, useEffect } from "react";
 import { paginate } from "../../../utils/paginate";
-import api from "../../../api";
 import UserTable from "../../ui/usersTable";
 import SearchStatus from "../../ui/searchStatus";
 import Pagination from "../../common/pagination";
 import GroupList from "../../common/groupList";
 import _ from "lodash";
 import TextField from "../../common/form/textField";
+import { useUser } from "../../../hooks/useUsers";
+import { useProfession } from "../../../hooks/useProfessions";
 
 const UsersListPage = () => {
+    const { users } = useUser();
+    const { professions } = useProfession();
     const [currentPage, setCurrentPage] = useState(1);
-    const [professions, setProfession] = useState();
     const [selectedProf, setSelectedProf] = useState();
     const [sortBy, setSortBy] = useState({ path: "name", order: "asc" });
-    const [users, setUsers] = useState();
     const [search, setSearch] = useState("");
     const pageSize = 8;
-    useEffect(() => {
-        api.users.fetchAll().then((data) => setUsers(data));
-        api.professions.fetchAll().then((data) => setProfession(data));
-    }, []);
+
     useEffect(() => {
         setCurrentPage(1);
     }, [selectedProf, search]);
 
     const handleDelete = (userId) => {
-        setUsers((prevState) =>
-            prevState.filter((user) => user._id !== userId)
-        );
+        console.log(userId);
     };
     const handleToggleBookMark = (id) => {
-        setUsers((prevState) =>
-            prevState.map((user) => {
-                if (user._id === id) {
-                    return { ...user, bookmark: !user.bookmark };
-                }
-                return user;
-            })
-        );
+        const newArray = users.map((user) => {
+            if (user._id === id) {
+                return { ...user, bookmark: !user.bookmark };
+            }
+            return user;
+        });
+        console.log(newArray);
     };
     const handlePageChange = (pageIndex) => {
         setCurrentPage(pageIndex);
@@ -57,11 +52,7 @@ const UsersListPage = () => {
 
     if (users) {
         const filteredUsers = selectedProf
-            ? users.filter(
-                  (user) =>
-                      JSON.stringify(user.profession) ===
-                      JSON.stringify(selectedProf)
-              )
+            ? users.filter((user) => user.profession === selectedProf._id)
             : users;
         const searchUsers = search
             ? users.filter((user) =>
@@ -127,4 +118,4 @@ const UsersListPage = () => {
     return "Loading...";
 };
 
-export default UsersListPage;
+export default React.memo(UsersListPage);

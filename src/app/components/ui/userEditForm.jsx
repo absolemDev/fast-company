@@ -19,7 +19,7 @@ const UserEditForm = ({
     const data = {
         name,
         email,
-        profession: profession._id,
+        profession,
         sex,
         qualities: qualities.map((quality) => ({
             label: quality.name,
@@ -117,7 +117,7 @@ UserEditForm.propTypes = {
     _id: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,
     email: PropTypes.string.isRequired,
-    profession: PropTypes.object.isRequired,
+    profession: PropTypes.string.isRequired,
     sex: PropTypes.string.isRequired,
     qualities: PropTypes.array.isRequired,
     professionsData: PropTypes.object.isRequired,

@@ -1,29 +1,26 @@
-import React, { useEffect, useState } from "react";
-import api from "../../../api";
+import React from "react";
 import PropTypes from "prop-types";
 import UserEditForm from "../../ui/userEditForm";
 import BackHistoryButton from "../../common/backButton";
+import { useUser } from "../../../hooks/useUsers";
+import { useProfession } from "../../../hooks/useProfessions";
+import { useQuality } from "../../../hooks/useQualities";
 
 const UserEditPage = ({ id }) => {
-    const [user, setUser] = useState();
-    const [professionsData, setProfessionData] = useState();
-    const [qualitiesData, setQualitiesData] = useState();
-    useEffect(() => {
-        api.users.getById(id).then((data) => setUser(data));
-        api.professions.fetchAll().then((data) => setProfessionData(data));
-        api.qualities.fetchAll().then((data) => setQualitiesData(data));
-    }, []);
+    const user = useUser().getUser(id);
+    const { professions } = useProfession();
+    const { qualities } = useQuality();
 
     return (
         <div className="container mt-5">
             <BackHistoryButton />
             <div className="row">
                 <div className="col-md-6 offset-md-3 shadow p-4">
-                    {user && professionsData && qualitiesData ? (
+                    {user && professions && qualities ? (
                         <UserEditForm
                             {...user}
-                            professionsData={professionsData}
-                            qualitiesData={qualitiesData}
+                            professionsData={professions}
+                            qualitiesData={qualities}
                         />
                     ) : (
                         <h3>Loading...</h3>

@@ -11,6 +11,10 @@ const BookMark = ({ status, ...rest }) => {
     );
 };
 
+BookMark.defaultProps = {
+    status: false
+};
+
 BookMark.propTypes = {
     status: PropTypes.bool.isRequired
 };
