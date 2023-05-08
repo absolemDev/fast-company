@@ -1,5 +1,5 @@
 /* eslint-disable indent */
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { paginate } from "../../../utils/paginate";
 import UserTable from "../../ui/usersTable";
 import SearchStatus from "../../ui/searchStatus";
@@ -45,10 +45,13 @@ const UsersListPage = () => {
     const handleSort = (item) => {
         setSortBy(item);
     };
-    const handleSearch = (target) => {
-        setSelectedProf();
-        setSearch(target.value);
-    };
+    const handleSearch = useCallback(
+        (target) => {
+            setSelectedProf();
+            setSearch(target.value);
+        },
+        [setSelectedProf, setSearch]
+    );
 
     if (users) {
         const filteredUsers = selectedProf
