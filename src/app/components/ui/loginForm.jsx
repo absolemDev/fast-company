@@ -13,6 +13,7 @@ const LoginForm = () => {
     });
     const { signIn } = useAuth();
     const [errors, setErrors] = useState({});
+    const [enterError, setEnterError] = useState(null);
     const isValid = Object.keys(errors).length === 0;
     const history = useHistory();
 
@@ -24,23 +25,10 @@ const LoginForm = () => {
         email: {
             isRequired: {
                 message: "Электронная почта обязательно для заполнения"
-            },
-            isEmail: {
-                message: "Введите коректный адрес электронной почты"
             }
         },
         password: {
-            isRequired: { message: "Пароль обязателен для заполнения" },
-            isCapitalSymbol: {
-                message: "Пароль должен содержать хотябы одну заглавную букву"
-            },
-            isContainDigit: {
-                message: "Пароль должен содержать хотябы одно число"
-            },
-            min: {
-                message: "Пароль должен состоять минимум из 8 символов",
-                value: 8
-            }
+            isRequired: { message: "Пароль обязателен для заполнения" }
         }
     };
 
@@ -52,6 +40,7 @@ const LoginForm = () => {
 
     const handelChange = (target) => {
         setData((prevState) => ({ ...prevState, [target.name]: target.value }));
+        setEnterError(null);
     };
     const handelSubmit = async (e) => {
         e.preventDefault();
@@ -61,7 +50,7 @@ const LoginForm = () => {
             await signIn(data);
             history.push("/");
         } catch (error) {
-            setErrors(error);
+            setEnterError(error.message);
         }
     };
 
@@ -89,9 +78,10 @@ const LoginForm = () => {
             >
                 Оставаться в системе
             </CheckBoxField>
+            {enterError && <p className="text-danger">{enterError}</p>}
             <button
                 type="submit"
-                disabled={!isValid}
+                disabled={!isValid || enterError}
                 className="btn btn-primary w-100 mx-auto"
             >
                 Submit
