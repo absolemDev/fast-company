@@ -12,6 +12,7 @@ import { useHistory } from "react-router-dom";
 
 const RegisterForm = () => {
     const [data, setData] = useState({
+        name: "",
         email: "",
         password: "",
         profession: "",
@@ -43,6 +44,15 @@ const RegisterForm = () => {
             },
             isEmail: {
                 message: "Введите коректный адрес электронной почты"
+            }
+        },
+        name: {
+            isRequired: {
+                message: "Электронная почта обязательно для заполнения"
+            },
+            min: {
+                message: "Пароль должен состоять минимум из 2 символов",
+                value: 2
             }
         },
         password: {
@@ -104,6 +114,13 @@ const RegisterForm = () => {
                 value={data.email}
                 onChange={handleChange}
                 error={errors.email}
+            />
+            <TextField
+                label="Имя"
+                name="name"
+                value={data.name}
+                onChange={handleChange}
+                error={errors.name}
             />
             <TextField
                 label="Пароль"

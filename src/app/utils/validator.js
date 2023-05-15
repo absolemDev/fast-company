@@ -25,7 +25,7 @@ export function validator(data, config) {
                 break;
             }
             case "min": {
-                statusValidate = data.length > config.value;
+                statusValidate = data.length >= config.value;
                 break;
             }
             default:
