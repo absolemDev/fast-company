@@ -24,7 +24,7 @@ const UserProvider = ({ children }) => {
             errorCacter(error);
         }
     }
-    function getUser(id) {
+    function getUserById(id) {
         return users.find((u) => u._id === id);
     }
     function errorCacter(error) {
@@ -44,7 +44,7 @@ const UserProvider = ({ children }) => {
     }, [error]);
 
     return (
-        <UserContext.Provider value={{ users, getUser }}>
+        <UserContext.Provider value={{ users, getUserById }}>
             {!isLoading ? children : "Loading..."}
         </UserContext.Provider>
     );

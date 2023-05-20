@@ -1,36 +1,22 @@
-import React, { useEffect, useState } from "react";
-import FormComponent, { SelectField, TextAreaField } from "../form";
-import api from "../../../api";
+import React from "react";
+import FormComponent, { TextAreaField } from "../form";
 import PropTypes from "prop-types";
+import { useAuth } from "../../../hooks/useAuth";
 
 const AddCommentForm = ({ pageId, onSubmit }) => {
+    const { currentUser } = useAuth();
     const data = {
-        userId: "",
+        userId: currentUser._id,
         pageId,
         content: ""
     };
-    const [allUsers, setAllUsers] = useState();
     const validatorConfig = {
-        userId: {
-            isRequired: {
-                message: "Выберите пользователя"
-            }
-        },
         content: {
             isRequired: {
                 message: "Поле обязательно для заполнения"
             }
         }
     };
-    useEffect(() => {
-        api.users
-            .fetchAll()
-            .then((data) =>
-                setAllUsers(
-                    data.map((user) => ({ value: user._id, name: user.name }))
-                )
-            );
-    });
 
     return (
         <FormComponent
@@ -38,11 +24,6 @@ const AddCommentForm = ({ pageId, onSubmit }) => {
             validatorConfig={validatorConfig}
             defaultData={data}
         >
-            <SelectField
-                defaultOption="Выберите пользователя"
-                options={allUsers}
-                name="userId"
-            />
             <TextAreaField label="Сообщение" name="content" />
             <button type="submit" className="btn btn-primary w-100 mx-auto">
                 Опубликовать

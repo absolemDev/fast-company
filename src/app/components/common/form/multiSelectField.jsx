@@ -21,6 +21,7 @@ const MultiSelectField = ({
     const handelChange = (value) => {
         onChange({ name, value });
     };
+
     return (
         <div className="mb-4">
             <label>{label}</label>

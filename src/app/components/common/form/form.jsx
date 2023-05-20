@@ -44,7 +44,7 @@ const FormComponent = ({
         const isValid = validate(data);
         if (!isValid) return;
         onSubmit(data);
-        setData({ ...defaultData });
+        // setData({ ...defaultData });
     };
 
     useEffect(() => {

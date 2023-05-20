@@ -8,6 +8,8 @@ import { ToastContainer } from "react-toastify";
 import { ProfessionProvider } from "./hooks/useProfessions";
 import { QualityProvider } from "./hooks/useQualities";
 import AuthProvider from "./hooks/useAuth";
+import ProtectedRoute from "./components/common/protectedRoute";
+import LogOut from "./layouts/logOut";
 
 function App() {
     return (
@@ -19,10 +21,11 @@ function App() {
                         <Switch>
                             <Route path="/" exact component={Main} />
                             <Route path="/login/:type?" component={Login} />
-                            <Route
+                            <ProtectedRoute
                                 path="/users/:userId?/:edit?"
                                 component={Users}
                             />
+                            <Route path="/logout" component={LogOut} />
                             <Redirect to="/" />
                         </Switch>
                     </QualityProvider>

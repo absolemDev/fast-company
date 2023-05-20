@@ -9,10 +9,12 @@ import _ from "lodash";
 import TextField from "../../common/form/textField";
 import { useUser } from "../../../hooks/useUsers";
 import { useProfession } from "../../../hooks/useProfessions";
+import { useAuth } from "../../../hooks/useAuth";
 
 const UsersListPage = () => {
     const { users } = useUser();
-    const { professions } = useProfession();
+    const { currentUser } = useAuth();
+    const { professions, isLoading: professionsLoading } = useProfession();
     const [currentPage, setCurrentPage] = useState(1);
     const [selectedProf, setSelectedProf] = useState();
     const [sortBy, setSortBy] = useState({ path: "name", order: "asc" });
@@ -53,72 +55,69 @@ const UsersListPage = () => {
         [setSelectedProf, setSearch]
     );
 
-    if (users) {
+    const filterUsers = (data) => {
         const filteredUsers = selectedProf
-            ? users.filter((user) => user.profession === selectedProf._id)
-            : users;
-        const searchUsers = search
-            ? users.filter((user) =>
+            ? data.filter((user) => user.profession === selectedProf._id)
+            : search
+            ? data.filter((user) =>
                   user.name.toLowerCase().includes(search.toLowerCase())
               )
-            : filteredUsers;
-        const count = searchUsers.length;
-        const sortedUsers = _.orderBy(
-            searchUsers,
-            [sortBy.path],
-            [sortBy.order]
-        );
-        const userCrop = paginate(sortedUsers, currentPage, pageSize);
-        const clearFilter = () => {
-            setSelectedProf();
-        };
+            : data;
+        return filteredUsers.filter((user) => user._id !== currentUser._id);
+    };
 
-        return (
-            <div className="d-flex">
-                {professions && (
-                    <div className="d-flex flex-column flex-shrink-0 p-3">
-                        <GroupList
-                            items={professions}
-                            selectedItem={selectedProf}
-                            onItemSelect={handleProfessionSelect}
-                        />
-                        <button
-                            className="btn btn-secondary mt-2"
-                            onClick={clearFilter}
-                        >
-                            Очистить
-                        </button>
-                    </div>
-                )}
-                <div className="d-flex flex-column">
-                    <SearchStatus length={count} />
-                    <TextField
-                        value={search}
-                        onChange={handleSearch}
-                        placeholder="Search..."
+    const filteredUsers = filterUsers(users);
+    const count = filteredUsers.length;
+    const sortedUsers = _.orderBy(filteredUsers, [sortBy.path], [sortBy.order]);
+    const userCrop = paginate(sortedUsers, currentPage, pageSize);
+    const clearFilter = () => {
+        setSelectedProf();
+    };
+
+    return (
+        <div className="d-flex">
+            {professions && !professionsLoading && (
+                <div className="d-flex flex-column flex-shrink-0 p-3">
+                    <GroupList
+                        items={professions}
+                        selectedItem={selectedProf}
+                        onItemSelect={handleProfessionSelect}
                     />
-                    {count > 0 && (
-                        <UserTable
-                            users={userCrop}
-                            selectedSort={sortBy}
-                            onSort={handleSort}
-                            onDelete={handleDelete}
-                            onToggleBookMark={handleToggleBookMark}
-                        />
-                    )}
-                    <div className="d-flex justify-content-center">
-                        <Pagination
-                            itemsCount={count}
-                            pageSize={pageSize}
-                            currentPage={currentPage}
-                            onPageChange={handlePageChange}
-                        />
-                    </div>
+                    <button
+                        className="btn btn-secondary mt-2"
+                        onClick={clearFilter}
+                    >
+                        Очистить
+                    </button>
+                </div>
+            )}
+            <div className="d-flex flex-column">
+                <SearchStatus length={count} />
+                <TextField
+                    value={search}
+                    onChange={handleSearch}
+                    placeholder="Search..."
+                />
+                {count > 0 && (
+                    <UserTable
+                        users={userCrop}
+                        selectedSort={sortBy}
+                        onSort={handleSort}
+                        onDelete={handleDelete}
+                        onToggleBookMark={handleToggleBookMark}
+                    />
+                )}
+                <div className="d-flex justify-content-center">
+                    <Pagination
+                        itemsCount={count}
+                        pageSize={pageSize}
+                        currentPage={currentPage}
+                        onPageChange={handlePageChange}
+                    />
                 </div>
             </div>
-        );
-    }
-    return "Loading...";
+        </div>
+    );
 };
 
 export default React.memo(UsersListPage);

@@ -13,7 +13,7 @@ const Users = () => {
             <UserProvider>
                 {userId ? (
                     edit ? (
-                        <UserEditPage id={userId} />
+                        <UserEditPage />
                     ) : (
                         <UserPage id={userId} />
                     )

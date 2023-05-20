@@ -1,30 +1,33 @@
 import React from "react";
-import api from "../../api";
 import PropTypes from "prop-types";
 import FormComponent, { TextField, SelectField } from "../common/form";
 import RadioField from "../common/form/radioField";
 import MultiSelectField from "../common/form/multiSelectField";
 import { useHistory } from "react-router-dom";
+import { useQuality } from "../../hooks/useQualities";
+import { useAuth } from "../../hooks/useAuth";
 
 const UserEditForm = ({
-    _id,
     name,
     email,
     profession,
     sex,
     qualities,
     professionsData,
-    qualitiesData
+    qualitiesData,
+    ...rest
 }) => {
+    const { updateUserData } = useAuth();
+    const { getQuality } = useQuality();
     const data = {
         name,
         email,
         profession,
         sex,
-        qualities: qualities.map((quality) => ({
-            label: quality.name,
-            value: quality._id
-        }))
+        qualities: qualities.map((q) => {
+            const quality = getQuality(q);
+            return { label: quality.name, value: quality._id };
+        })
     };
 
     const history = useHistory();
@@ -48,35 +51,40 @@ const UserEditForm = ({
         }
     };
 
-    const getQualitiesArray = (qualities) => {
-        return qualities.map((quality) => {
-            let qualityData;
-            for (const q in qualitiesData) {
-                if (qualitiesData[q]._id === quality.value) {
-                    qualityData = qualitiesData[q];
-                }
-            }
-            return qualityData;
-        });
-    };
-    const getProfessionObject = (id) => {
-        for (const p in professionsData) {
-            const profeessionData = professionsData[p];
-            if (professionsData[p]._id === id) return profeessionData;
-        }
-    };
+    // const getQualitiesArray = (qualities) => {
+    //     return qualities.map((quality) => {
+    //         let qualityData;
+    //         for (const q in qualitiesData) {
+    //             if (qualitiesData[q]._id === quality.value) {
+    //                 qualityData = qualitiesData[q];
+    //             }
+    //         }
+    //         return qualityData;
+    //     });
+    // };
+    // const getProfessionObject = (id) => {
+    //     for (const p in professionsData) {
+    //         const profeessionData = professionsData[p];
+    //         if (professionsData[p]._id === id) return profeessionData;
+    //     }
+    // };
 
     const handelSubmit = (data) => {
-        console.log(data);
-        api.users
-            .update(_id, {
-                ...data,
-                qualities: getQualitiesArray(data.qualities),
-                profession: getProfessionObject(data.profession)
-            })
-            .then(() => {
-                history.replace(`/users/${_id}`);
-            });
+        updateUserData({
+            ...rest,
+            ...data,
+            qualities: data.qualities.map((q) => q.value)
+        });
+        history.replace(`/users/${rest._id}`);
+        // api.users
+        //     .update(_id, {
+        //         ...data,
+        //         qualities: getQualitiesArray(data.qualities),
+        //         profession: getProfessionObject(data.profession)
+        //     })
+        //     .then(() => {
+        //         history.replace(`/users/${_id}`);
+        //     });
     };
 
     return (
@@ -120,8 +128,8 @@ UserEditForm.propTypes = {
     profession: PropTypes.string.isRequired,
     sex: PropTypes.string.isRequired,
     qualities: PropTypes.array.isRequired,
-    professionsData: PropTypes.object.isRequired,
-    qualitiesData: PropTypes.object.isRequired
+    professionsData: PropTypes.array.isRequired,
+    qualitiesData: PropTypes.array.isRequired
 };
 
 export default UserEditForm;

@@ -5,9 +5,11 @@ import QualitiesCard from "../../ui/qualitiesCard";
 import MeetingsCard from "../../ui/meetingsCard";
 import CommentsSection from "../../ui/commentsSection";
 import { useUser } from "../../../hooks/useUsers";
+import { CommentsProvider } from "../../../hooks/useComments";
 
 const UserPage = ({ id }) => {
-    const user = useUser().getUser(id);
+    const { getUserById } = useUser();
+    const user = getUserById(id);
 
     if (user) {
         return (
@@ -19,7 +21,9 @@ const UserPage = ({ id }) => {
                         <MeetingsCard count={user.completedMeetings} />
                     </div>
                     <div className="col-md-8">
-                        <CommentsSection />
+                        <CommentsProvider>
+                            <CommentsSection />
+                        </CommentsProvider>
                     </div>
                 </div>
             </div>

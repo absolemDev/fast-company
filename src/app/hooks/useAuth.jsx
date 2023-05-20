@@ -4,8 +4,10 @@ import axios from "axios";
 import userService from "../services/user.service";
 import { toast } from "react-toastify";
 import localStorageService, {
+    getAccessToken,
     setTokens
 } from "../services/localStorage.service";
+import { useHistory } from "react-router-dom";
 
 export const httpAuth = axios.create({
     baseURL: "https://identitytoolkit.googleapis.com/v1/",
@@ -20,9 +22,10 @@ export const useAuth = () => {
 };
 
 const AuthProvider = ({ children }) => {
-    const [currentUser, setUser] = useState({});
-    console.log(currentUser);
+    const [currentUser, setUser] = useState();
     const [error, setError] = useState(null);
+    const [isLoading, setLoading] = useState(true);
+    const history = useHistory();
 
     async function signIn({ email, password }) {
         const url = "accounts:signInWithPassword";
@@ -33,7 +36,7 @@ const AuthProvider = ({ children }) => {
                 returnSecureToken: true
             });
             setTokens(data);
-            getUserData();
+            await getUserData();
         } catch (error) {
             errorCatcher(error);
             const { code, message } = error.response.data.error;
@@ -69,6 +72,11 @@ const AuthProvider = ({ children }) => {
                 email,
                 rate: randomInt(1, 5),
                 completedMeetings: randomInt(0, 200),
+                image: `https://avatars.dicebear.com/api/avataaars/${(
+                    Math.random() + 1
+                )
+                    .toString(36)
+                    .substring(7)}.svg`,
                 ...rest
             });
             console.log(data);
@@ -85,6 +93,13 @@ const AuthProvider = ({ children }) => {
             }
         }
     }
+
+    function logOut() {
+        localStorageService.removeAuthData();
+        setUser(null);
+        history.push("/");
+    }
+
     async function createUser(data) {
         try {
             const { content } = await userService.create(data);
@@ -93,10 +108,22 @@ const AuthProvider = ({ children }) => {
             errorCatcher(error);
         }
     }
+
     async function getUserData() {
         try {
             const { content } = await userService.getCurrentUser();
             setUser(content);
+        } catch (error) {
+            errorCatcher(error);
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    async function updateUserData(data) {
+        try {
+            const { content } = await userService.updateUser(data);
+            console.log(content);
         } catch (error) {
             errorCatcher(error);
         }
@@ -108,8 +135,10 @@ const AuthProvider = ({ children }) => {
     }
 
     useEffect(() => {
-        if (localStorageService.getAccessToken()) {
+        if (getAccessToken()) {
             getUserData();
+        } else {
+            setLoading(false);
         }
     }, []);
 
@@ -121,8 +150,17 @@ const AuthProvider = ({ children }) => {
     }, [error]);
 
     return (
-        <AuthContext.Provider value={{ signIn, signUp, createUser }}>
-            {children}
+        <AuthContext.Provider
+            value={{
+                currentUser,
+                signIn,
+                signUp,
+                createUser,
+                logOut,
+                updateUserData
+            }}
+        >
+            {!isLoading ? children : "Loading..."}
         </AuthContext.Provider>
     );
 };

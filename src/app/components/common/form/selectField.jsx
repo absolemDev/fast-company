@@ -22,6 +22,7 @@ const SelectField = ({
     const handelChange = ({ target }) => {
         onChange({ name: target.name, value: target.value });
     };
+
     return (
         <div className="mb-4">
             <label htmlFor={name} className="form-label">
