@@ -4,10 +4,10 @@ import { useQuality } from "../../../hooks/useQualities";
 
 const Qualitie = ({ id }) => {
     const { isLoading, getQuality } = useQuality();
-    const { _id, name, color } = getQuality(id);
+    const { name, color } = getQuality(id);
     if (!isLoading) {
         return (
-            <span className={`badge bg-${color} m-1`} key={_id}>
+            <span className={`badge bg-${color} m-1`} key={id}>
                 {name}
             </span>
         );
